@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -10,30 +11,69 @@ export function SignupForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [workspaceName, setWorkspaceName] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          full_name: email,
           workspace_name: workspaceName || 'Meu Workspace',
         },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-    if (!error) router.push('/login');
+
+    setLoading(false);
+
+    if (!error) {
+      router.push('/login');
+    }
   };
 
   return (
-    <form onSubmit={onSubmit} className="mx-auto mt-24 max-w-md space-y-4 rounded-2xl border bg-white p-6 shadow">
-      <h1 className="text-2xl font-semibold">Criar conta</h1>
-      <input className="w-full rounded-xl border p-3" placeholder="Nome do workspace" value={workspaceName} onChange={e => setWorkspaceName(e.target.value)} />
-      <input className="w-full rounded-xl border p-3" placeholder="E-mail" value={email} onChange={e => setEmail(e.target.value)} />
-      <input className="w-full rounded-xl border p-3" placeholder="Senha" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-      <button className="w-full rounded-xl bg-blue-600 p-3 text-white">Cadastrar</button>
+    <form onSubmit={handleSignup} className="w-full space-y-4 rounded-2xl border bg-white p-6 shadow">
+      <div>
+        <h1 className="text-2xl font-semibold">Criar conta</h1>
+        <p className="text-sm text-slate-500">Cadastre seu acesso</p>
+      </div>
+
+      <input
+        className="w-full rounded-xl border p-3 outline-none"
+        type="text"
+        placeholder="Nome do workspace"
+        value={workspaceName}
+        onChange={(e) => setWorkspaceName(e.target.value)}
+      />
+
+      <input
+        className="w-full rounded-xl border p-3 outline-none"
+        type="email"
+        placeholder="Seu e-mail"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+
+      <input
+        className="w-full rounded-xl border p-3 outline-none"
+        type="password"
+        placeholder="Sua senha"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full rounded-xl bg-blue-600 p-3 font-medium text-white disabled:opacity-60"
+      >
+        {loading ? 'Criando...' : 'Criar conta'}
+      </button>
     </form>
   );
 }
