@@ -1,58 +1,48 @@
-'use client';
+import Link from 'next/link';
 
-import { createClient } from '@/lib/supabase/client';
+type DashboardShellProps = {
+  email?: string | null;
+  children?: React.ReactNode;
+};
 
-export function DashboardShell({ email, workspace, metrics, campaigns, products }: any) {
-  const supabase = createClient();
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    window.location.href = '/login';
-  };
-
+export function DashboardShell({ email, children }: DashboardShellProps) {
   return (
-    <main className="mx-auto max-w-7xl space-y-8 p-6">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Shopee Affiliate SaaS</h1>
-          <p className="text-slate-600">{email} · {workspace}</p>
-        </div>
-        <button onClick={signOut} className="rounded-xl border px-4 py-2">Sair</button>
-      </header>
-
-      <section className="grid gap-4 md:grid-cols-4">
-        {metrics.map((item: any) => (
-          <div key={item.label} className="rounded-2xl border bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">{item.label}</p>
-            <p className="mt-2 text-2xl font-semibold">{item.value}</p>
+    <main className="mx-auto min-h-screen max-w-6xl p-6">
+      <section className="rounded-2xl border bg-white p-6 shadow">
+        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold">Dashboard</h1>
+            <p className="mt-1 text-slate-600">
+              Bem-vindo{email ? `, ${email}` : ''}.
+            </p>
           </div>
-        ))}
-      </section>
 
-      <section className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-semibold">Campanhas</h2>
-          <ul className="mt-4 space-y-3">
-            {campaigns.map((c: any) => (
-              <li key={c.name} className="flex items-center justify-between rounded-xl bg-slate-50 p-3">
-                <span>{c.name}</span>
-                <span className="text-sm text-slate-500">{c.status}</span>
-              </li>
-            ))}
-          </ul>
+          <Link
+            href="/auth/logout"
+            className="inline-flex w-fit rounded-xl border px-4 py-2 text-sm font-medium"
+          >
+            Sair
+          </Link>
         </div>
 
-        <div className="rounded-2xl border bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-semibold">Produtos em destaque</h2>
-          <ul className="mt-4 space-y-3">
-            {products.map((p: any) => (
-              <li key={p.name} className="rounded-xl bg-slate-50 p-3">
-                <p className="font-medium">{p.name}</p>
-                <p className="text-sm text-slate-500">{p.category} · {p.price}</p>
-              </li>
-            ))}
-          </ul>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="rounded-xl bg-slate-50 p-4">
+            <p className="text-sm text-slate-500">Cliques</p>
+            <p className="text-2xl font-bold">12.4k</p>
+          </div>
+
+          <div className="rounded-xl bg-slate-50 p-4">
+            <p className="text-sm text-slate-500">Conversões</p>
+            <p className="text-2xl font-bold">1.8k</p>
+          </div>
+
+          <div className="rounded-xl bg-slate-50 p-4">
+            <p className="text-sm text-slate-500">Comissão</p>
+            <p className="text-2xl font-bold">R$ 8.4k</p>
+          </div>
         </div>
+
+        {children}
       </section>
     </main>
   );
