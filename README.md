@@ -1,15 +1,22 @@
 # Shopee Affiliate SaaS
 
-Starter SaaS para afiliados Shopee em Next.js + TypeScript.
+SaaS em Next.js + Supabase Auth para afiliados Shopee.
 
-## Recursos
-- Dashboard com métricas.
-- Gerador de links afiliados.
-- Busca de produtos.
-- Relatórios e campanhas.
-- Estrutura pronta para GitHub e deploy.
+## Stack
+- Next.js
+- TypeScript
+- Supabase Auth
+- Supabase Postgres
+- Tailwind CSS
 
-## Como rodar
-```bash
-npm install
-npm run dev
+## Setup
+1. Crie um projeto no Supabase.
+2. Copie URL e chave pública para `.env.local`.
+3. Instale dependências.
+4. Rode `npm run dev`.
+
+## Rotas
+- `/login`
+- `/signup`
+- `/dashboard`
+- `/auth/callback`
