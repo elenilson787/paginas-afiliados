@@ -17,12 +17,14 @@ export function DashboardShell({ email, children }: DashboardShellProps) {
             </p>
           </div>
 
-          <Link
-            href="/auth/logout"
-            className="inline-flex w-fit rounded-xl border px-4 py-2 text-sm font-medium"
-          >
-            Sair
-          </Link>
+          <form action="/auth/logout" method="post">
+            <button
+              type="submit"
+              className="inline-flex w-fit rounded-xl border px-4 py-2 text-sm font-medium"
+            >
+              Sair
+            </button>
+          </form>
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
