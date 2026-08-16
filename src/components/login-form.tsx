@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -34,7 +34,6 @@ export function LoginForm() {
     }
 
     router.replace("/dashboard");
-    router.refresh();
   }
 
   return (
@@ -107,10 +106,7 @@ export function LoginForm() {
 
       <p className="text-center text-sm text-slate-600">
         Ainda não tem uma conta?{" "}
-        <Link
-          href="/signup"
-          className="font-medium text-blue-600 underline"
-        >
+        <Link href="/signup" className="font-medium text-blue-600 underline">
           Criar conta
         </Link>
       </p>
