@@ -1,79 +1,119 @@
+"use client";
 
-'use client';
+import { FormEvent, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
-
-export function SignupForm() {
+export function LoginForm() {
   const router = useRouter();
   const supabase = createClient();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [workspaceName, setWorkspaceName] = useState('');
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
+  async function handleLogin(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
     setLoading(true);
+    setErrorMessage("");
 
-    const { error } = await supabase.auth.signUp({
-      email,
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
       password,
-      options: {
-        data: {
-          workspace_name: workspaceName || 'Meu Workspace',
-        },
-      },
     });
 
-    setLoading(false);
-
-    if (!error) {
-      router.push('/login');
+    if (error) {
+      setLoading(false);
+      setErrorMessage(
+        "Não foi possível entrar. Verifique seu e-mail e sua senha."
+      );
+      return;
     }
-  };
+
+    router.replace("/dashboard");
+    router.refresh();
+  }
 
   return (
-    <form onSubmit={handleSignup} className="w-full space-y-4 rounded-2xl border bg-white p-6 shadow">
+    <form
+      onSubmit={handleLogin}
+      className="w-full space-y-4 rounded-2xl border bg-white p-6 shadow"
+    >
       <div>
-        <h1 className="text-2xl font-semibold">Criar conta</h1>
-        <p className="text-sm text-slate-500">Cadastre seu acesso</p>
+        <h1 className="text-2xl font-semibold">Entrar</h1>
+        <p className="text-sm text-slate-500">
+          Acesse seu painel de afiliado
+        </p>
       </div>
 
-      <input
-        className="w-full rounded-xl border p-3 outline-none"
-        type="text"
-        placeholder="Nome do workspace"
-        value={workspaceName}
-        onChange={(e) => setWorkspaceName(e.target.value)}
-      />
+      <div className="space-y-2">
+        <label htmlFor="email" className="text-sm font-medium text-slate-700">
+          E-mail
+        </label>
 
-      <input
-        className="w-full rounded-xl border p-3 outline-none"
-        type="email"
-        placeholder="Seu e-mail"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+        <input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="seu@email.com"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          autoComplete="email"
+          required
+          className="w-full rounded-xl border p-3 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+        />
+      </div>
 
-      <input
-        className="w-full rounded-xl border p-3 outline-none"
-        type="password"
-        placeholder="Sua senha"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+      <div className="space-y-2">
+        <label
+          htmlFor="password"
+          className="text-sm font-medium text-slate-700"
+        >
+          Senha
+        </label>
+
+        <input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Sua senha"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          autoComplete="current-password"
+          required
+          className="w-full rounded-xl border p-3 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+        />
+      </div>
+
+      {errorMessage && (
+        <p
+          role="alert"
+          className="rounded-xl bg-red-50 p-3 text-sm text-red-700"
+        >
+          {errorMessage}
+        </p>
+      )}
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-blue-600 p-3 font-medium text-white disabled:opacity-60"
+        className="w-full rounded-xl bg-blue-600 p-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {loading ? 'Criando...' : 'Criar conta'}
+        {loading ? "Entrando..." : "Entrar"}
       </button>
+
+      <p className="text-center text-sm text-slate-600">
+        Ainda não tem uma conta?{" "}
+        <Link
+          href="/signup"
+          className="font-medium text-blue-600 underline"
+        >
+          Criar conta
+        </Link>
+      </p>
     </form>
   );
 }
